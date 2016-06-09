@@ -2,7 +2,7 @@
     test
 </div>
 <div id="content">
-    <br clear="all" />
+    <br clear="all"/>
     <h2>Load Time Test</h2>
     {load_time}ms<br/>
     Number of AutoLoaded classes loaded: {class_load}

@@ -27,11 +27,11 @@ class Query
 
     private $_join = array();
     private $_where = null;
-	private $_order_by = array();
+    private $_order_by = array();
 
 
-	private $_limit_count = 0;
-	private $_limit_start = 0;
+    private $_limit_count = 0;
+    private $_limit_start = 0;
 
 
     private $_forced_mode = false;
@@ -41,21 +41,20 @@ class Query
     {
 
     }
-	public function Delete($table)
-	{
-		$this->_delete = "DELETE FROM $table";
-		return $this;
-	}
+
+    public function Delete($table)
+    {
+        $this->_delete = "DELETE FROM $table";
+        return $this;
+    }
+
     public function Select($values, $table)
     {
         $this->_select = 'SELECT ';
 
-        if ( is_array($values) )
-        {
+        if (is_array($values)) {
             $this->_select .= implode(',', $values);
-        }
-        else
-        {
+        } else {
             $this->_select .= $values;
         }
 
@@ -64,60 +63,60 @@ class Query
         return $this;
     }
 
-	public function Update($table, $values)
-	{
-		$this->_update = 'UPDATE ' . $table . ' SET ';
+    public function Update($table, $values)
+    {
+        $this->_update = 'UPDATE ' . $table . ' SET ';
 
-		$kvs = array();
+        $kvs = array();
 
-		foreach ($values as $key => $value)
-		{
-			$kvs[] = "$key=" .  GSCP_Core()->Database()->PDO()->quote($value);
-		}
+        foreach ($values as $key => $value) {
+            $kvs[] = "$key=" . GSCP_Core()->Database()->PDO()->quote($value);
+        }
 
-		$this->_update .= implode(', ', $kvs);
+        $this->_update .= implode(', ', $kvs);
 
-		return $this;
-	}
+        return $this;
+    }
 
 
-	public function Insert($table, $values)
-	{
-		$this->_insert = 'INSERT INTO ' . $table;
+    public function Insert($table, $values)
+    {
+        $this->_insert = 'INSERT INTO ' . $table;
 
-		$this->_insert .= '(' . implode(', ', array_keys($values)) . ')';
+        $this->_insert .= '(' . implode(', ', array_keys($values)) . ')';
 
-		$insert_vals = array_values($values);
-		foreach ($insert_vals as &$val)
-		{
-			if(!in_array(strtolower($val), array('date()', 'now()')))
-				$val = GSCP_Core()->Database()->PDO()->quote($val);
-		}
+        $insert_vals = array_values($values);
+        foreach ($insert_vals as &$val) {
+            if (!in_array(strtolower($val), array('date()', 'now()')))
+                $val = GSCP_Core()->Database()->PDO()->quote($val);
+        }
 
-		$this->_insert .= ' VALUES(' . implode(', ', $insert_vals) . ')';
+        $this->_insert .= ' VALUES(' . implode(', ', $insert_vals) . ')';
 
-		return $this;
-	}
+        return $this;
+    }
 
     public function Join($table, $condition = '', $mode = 'INNER')
     {
         $this->_join[] = $join = new Query_Join($table, $mode);
-        if ( !empty($condition) )
-        {
+        if (!empty($condition)) {
             $join->On($condition);
         }
         return $this;
     }
+
     public function On_NE($key, $value = '', $cond_mode = '=', $link_mode = 'AND')
     {
         $this->last_join()->On($key, $value, $cond_mode, $link_mode, false);
         return $this;
     }
+
     public function On($key, $value = '', $cond_mode = '=', $link_mode = 'AND')
     {
         $this->last_join()->On($key, $value, $cond_mode, $link_mode);
         return $this;
     }
+
     public function last_join()
     {
         return $this->_join[count($this->_join) - 1];
@@ -125,79 +124,73 @@ class Query
 
     public function Where($key, $value = '', $cond_mode = '=', $link_mode = 'AND')
     {
-        if( !isset($this->_where) )
+        if (!isset($this->_where))
             $this->_where = new Query_Where();
 
         $this->_where->Where($key, $value, $cond_mode, $link_mode);
 
         return $this;
     }
-	public function WhereNE($key, $value = '', $cond_mode = '=', $link_mode = 'AND')
-	{
-		if( !isset($this->_where) )
-			$this->_where = new Query_Where();
 
-		$this->_where->Where($key, $value, $cond_mode, $link_mode, false);
+    public function WhereNE($key, $value = '', $cond_mode = '=', $link_mode = 'AND')
+    {
+        if (!isset($this->_where))
+            $this->_where = new Query_Where();
 
-		return $this;
-	}
-	public function OrderBy($field, $mode = 'ASC')
-	{
-		$this->_order_by[] = new Query_Order($field, $mode);
+        $this->_where->Where($key, $value, $cond_mode, $link_mode, false);
 
-		return $this;
-	}
-	private function _ConstructOrder()
-	{
-		if(empty($this->_order_by))
-		{
-			return null;
-		}
+        return $this;
+    }
 
-		$query = array();
+    public function OrderBy($field, $mode = 'ASC')
+    {
+        $this->_order_by[] = new Query_Order($field, $mode);
 
-		foreach($this->_order_by as $order)
-		{
-			$query[] = $order;
-		}
-		return  'ORDER BY ' . implode(', ', $query);
-	}
-	public function Construct()
-	{
-		$query = array();
-		if( ($this->_mode == self::MODE_UNKNOWN &&  isset($this->_select) && !empty($this->_select)) || $this->_mode == self::MODE_SELECT  )
-		{
-			$query[] = $this->_select;
-		}
-		elseif ( ($this->_mode == self::MODE_UNKNOWN &&  isset($this->_update) && !empty($this->_update)) || $this->_mode == self::MODE_UPDATE  )
-		{
-			$query[] = $this->_update;
-		}
-		elseif ( ($this->_mode == self::MODE_UNKNOWN &&  isset($this->_insert) && !empty($this->_insert)) || $this->_mode == self::MODE_INSERT  )
-		{
-			$query[] = $this->_insert;
-		}
-		elseif ( ($this->_mode == self::MODE_UNKNOWN &&  isset($this->_delete) && !empty($this->_delete)) || $this->_mode == self::MODE_DELETE  )
-		{
-			$query[] = $this->_delete;
-		}
+        return $this;
+    }
+
+    private function _ConstructOrder()
+    {
+        if (empty($this->_order_by)) {
+            return null;
+        }
+
+        $query = array();
+
+        foreach ($this->_order_by as $order) {
+            $query[] = $order;
+        }
+        return 'ORDER BY ' . implode(', ', $query);
+    }
+
+    public function Construct()
+    {
+        $query = array();
+        if (($this->_mode == self::MODE_UNKNOWN && isset($this->_select) && !empty($this->_select)) || $this->_mode == self::MODE_SELECT) {
+            $query[] = $this->_select;
+        } elseif (($this->_mode == self::MODE_UNKNOWN && isset($this->_update) && !empty($this->_update)) || $this->_mode == self::MODE_UPDATE) {
+            $query[] = $this->_update;
+        } elseif (($this->_mode == self::MODE_UNKNOWN && isset($this->_insert) && !empty($this->_insert)) || $this->_mode == self::MODE_INSERT) {
+            $query[] = $this->_insert;
+        } elseif (($this->_mode == self::MODE_UNKNOWN && isset($this->_delete) && !empty($this->_delete)) || $this->_mode == self::MODE_DELETE) {
+            $query[] = $this->_delete;
+        }
 
 
-		foreach($this->_join as $join)
-		{
-			$query[] = $join;
-		}
+        foreach ($this->_join as $join) {
+            $query[] = $join;
+        }
 
 
-		$query[] = $this->_where;
+        $query[] = $this->_where;
 
-		$query[] = $this->_ConstructOrder();
+        $query[] = $this->_ConstructOrder();
 
-		if($this->_limit_count != 0)
-			$query[] = "LIMIT {$this->_limit_start}, {$this->_limit_count}";
+        if ($this->_limit_count != 0)
+            $query[] = "LIMIT {$this->_limit_start}, {$this->_limit_count}";
 
-		return implode(' ', $query);
-	}
+        return implode(' ', $query);
+    }
 
     public function __toString()
     {

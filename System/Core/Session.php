@@ -1,6 +1,7 @@
 <?php
 using('MySql', 'Core');
 using('Core', 'Core');
+
 /**
  * TODO: Update Description
  *
@@ -24,41 +25,44 @@ class Session
         if (!(isset($_COOKIE[$this->cookie_name]) && !empty($_COOKIE[$this->cookie_name]) && $this->_Load($_COOKIE[$this->cookie_name])))
             $this->_GenerateNewSession();
     }
+
     public function Set($key, $value)
     {
         $this->data[$key] = $value;
     }
+
     public function Get($key = null)
     {
-        if(empty($key))
+        if (empty($key))
             return $this->data;
         else
             return isset($this->data[$key]) ? $this->data[$key] : null;
     }
+
     private function _Load($session_id)
     {
         $query = "SELECT session_id, ip, user_agent, data FROM {$this->dbname} WHERE session_id = ?";
         $result = GSCP_Core()->Database()->GetFirst($query, array($session_id));
-        if($result != null)
-        {
-            $this->session_id   = $result['session_id'];
-            $this->user_agent   = $result['user_agent'];
-            $this->ip           = $result['ip'];
-            $this->data         = unserialize($result['data']);
+        if ($result != null) {
+            $this->session_id = $result['session_id'];
+            $this->user_agent = $result['user_agent'];
+            $this->ip = $result['ip'];
+            $this->data = unserialize($result['data']);
             return true;
         }
         return false;
     }
+
     public function Save()
     {
-		$query = "UPDATE {$this->dbname} SET ip = ?, user_agent = ?, data = ? WHERE session_id = ?";
+        $query = "UPDATE {$this->dbname} SET ip = ?, user_agent = ?, data = ? WHERE session_id = ?";
 
-		GSCP_Core()->Database()->Exec($query, array(
-			$this->ip,
-			$this->user_agent,
-			serialize($this->data),
-			$this->session_id
-		));
+        GSCP_Core()->Database()->Exec($query, array(
+            $this->ip,
+            $this->user_agent,
+            serialize($this->data),
+            $this->session_id
+        ));
     }
 
     private function _StartInDB()
@@ -76,12 +80,12 @@ class Session
 
     private function _GenerateNewSession()
     {
-        $this->session_id =  md5(uniqid(microtime()) . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
+        $this->session_id = md5(uniqid(microtime()) . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']);
         $this->ip = $_SERVER['REMOTE_ADDR'];
         $this->user_agent = $_SERVER['HTTP_USER_AGENT'];
 
         $this->_StartInDB();
 
-        setcookie($this->cookie_name, $this->session_id, time() + (60*60*24), '/');
+        setcookie($this->cookie_name, $this->session_id, time() + (60 * 60 * 24), '/');
     }
 }

@@ -18,53 +18,47 @@ class Query_Where
     {
         $this->Where($key, '', $cond_mode, $link_mode);
     }
+
     public function Where($key, $value = '', $cond_mode = '=', $link_mode = 'AND', $escape = true)
     {
-        if ( !is_array($key) && empty($value) )
-        {
+        if (!is_array($key) && empty($value)) {
             $this->_where[] = array(
                 'value' => $key,
-                'mode'  => $link_mode
+                'mode' => $link_mode
             );
-        }
-        else if ( is_array($key) )
-        {
-            foreach( $key as $k => $v )
-            {
-                if($escape)
+        } else if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                if ($escape)
                     $v = GSCP_Core()->Database()->PDO()->quote($v);
                 $this->_where[] = array(
                     'value' => "$k $cond_mode $v",
-                    'mode'  => $link_mode
+                    'mode' => $link_mode
                 );
             }
-        }
-        else
-        {
-            if($escape)
+        } else {
+            if ($escape)
                 $value = GSCP_Core()->Database()->PDO()->quote($value);
             $this->_where[] = array(
                 'value' => "$key $cond_mode $value",
-                'mode'  => $link_mode
+                'mode' => $link_mode
             );
         }
     }
+
     public function Where_Or($key, $value = '', $cond_mode = '=')
     {
         $this->Where($key, $value, $cond_mode, 'OR');
     }
+
     public function __toString()
     {
         $where = "WHERE ";
-        if( count($this->_where) > 0)
-        {
+        if (count($this->_where) > 0) {
             $first = true;
-            foreach( $this->_where as $conds )
-            {
-                if($first)
-                {
+            foreach ($this->_where as $conds) {
+                if ($first) {
                     $first = false;
-                }else
+                } else
                     $where .= " {$conds['mode']} ";
 
                 $where .= $conds['value'];

@@ -23,58 +23,53 @@ class Query_Join
         $this->_table = $table;
         $this->_type = $type;
     }
+
     public function On_Group($key, $cond_mode = '=', $link_mode = 'AND')
     {
         $this->On($key, '', $cond_mode, $link_mode);
     }
+
     public function On($key, $value = '', $cond_mode = '=', $link_mode = 'AND', $escape = true)
     {
-        if ( !is_array($key) && empty($value) )
-        {
+        if (!is_array($key) && empty($value)) {
             $this->_on[] = array(
                 'value' => $key,
-                'mode'  => $link_mode
+                'mode' => $link_mode
             );
-        }
-        else if ( is_array($key) )
-        {
-            foreach( $key as $k => $v )
-            {
-                if($escape)
+        } else if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                if ($escape)
                     $v = GSCP_Core()->Database()->PDO()->quote($v);
                 $this->_on[] = array(
                     'value' => "$k $cond_mode $v",
-                    'mode'  => $link_mode
+                    'mode' => $link_mode
                 );
             }
-        }
-        else
-        {
-            if($escape)
-               $value = GSCP_Core()->Database()->PDO()->quote($value);
+        } else {
+            if ($escape)
+                $value = GSCP_Core()->Database()->PDO()->quote($value);
             $this->_on[] = array(
                 'value' => "$key $cond_mode $value",
-                'mode'  => $link_mode
+                'mode' => $link_mode
             );
         }
     }
+
     public function On_Or($key, $value = '', $cond_mode = '=')
     {
         $this->On($key, $value, $cond_mode, 'OR');
     }
+
     public function __toString()
     {
         $join = "{$this->_type} JOIN {$this->_table}";
-        if( count($this->_on) > 0)
-        {
+        if (count($this->_on) > 0) {
             $first = true;
-            foreach( $this->_on as $on )
-            {
-                if($first)
-                {
+            foreach ($this->_on as $on) {
+                if ($first) {
                     $join .= ' ON ';
                     $first = false;
-                }else
+                } else
                     $join .= " {$on['mode']} ";
 
                 $join .= $on['value'];

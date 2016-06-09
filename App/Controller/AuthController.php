@@ -13,31 +13,32 @@ using('Authentication', 'App.Lib');
  **/
 class AuthController extends PageController
 {
-	private $auth;
-	public function __construct()
-	{
-		parent::__construct();
-		$this->auth = new Authentication();
+    private $auth;
 
-		if($this->auth->isLoggedIn())
-		{
-			header('location: /dashboard');
+    public function __construct()
+    {
+        parent::__construct();
+        $this->auth = new Authentication();
 
-			die();
-		}
-	}
-	public function Auth()
-	{
+        if ($this->auth->isLoggedIn()) {
+            header('location: /dashboard');
 
-	}
+            die();
+        }
+    }
+
+    public function Auth()
+    {
+
+    }
 
 
-	/**
-	 * Renders the login page if user is not logged in.
-	 */
-	public function Login()
-	{
-		header('PAGE_STATE: login');
-		$this->Display('auth/login');
-	}
+    /**
+     * Renders the login page if user is not logged in.
+     */
+    public function Login()
+    {
+        header('PAGE_STATE: login');
+        $this->Display('auth/login');
+    }
 }

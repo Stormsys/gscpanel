@@ -16,39 +16,38 @@ using('Authentication', 'App.Lib');
  **/
 class AdminController extends AjaxController
 {
-	private $auth;
+    private $auth;
 
-	/**
-	 * validates that there is a user online and that they are an admin else denies access to the rest of the file.
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-		$this->auth = new Authentication();
-		if(!$this->auth->isLoggedIn() || !($this->auth->GetUser()->Permissions()->Has('admin')))
-		{
-			die();
-		}
-	}
+    /**
+     * validates that there is a user online and that they are an admin else denies access to the rest of the file.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->auth = new Authentication();
+        if (!$this->auth->isLoggedIn() || !($this->auth->GetUser()->Permissions()->Has('admin'))) {
+            die();
+        }
+    }
 
-	/**
-	 * obtains the dedicated servers default ip address.
-	 *
-	 * @param int $id the id of the dedicated server.
-	 */
-	public function GetDedicatedserverIp($id)
-	{
-		$this->out(DedicatedServer::GetIp($id));
-	}
+    /**
+     * obtains the dedicated servers default ip address.
+     *
+     * @param int $id the id of the dedicated server.
+     */
+    public function GetDedicatedserverIp($id)
+    {
+        $this->out(DedicatedServer::GetIp($id));
+    }
 
 
-	/**
-	 * obtains the default data for the template specified.
-	 *
-	 * @param int $id the id of the template.
-	 */
-	public function GetTemplateData($id)
-	{
-		$this->out(GameServerTemplate::GetById($id)->fetch());
-	}
+    /**
+     * obtains the default data for the template specified.
+     *
+     * @param int $id the id of the template.
+     */
+    public function GetTemplateData($id)
+    {
+        $this->out(GameServerTemplate::GetById($id)->fetch());
+    }
 }

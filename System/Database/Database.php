@@ -1,8 +1,9 @@
 <?php
+
 /**
  * TODO: Update Description
- * 
- * @package    GameServerControlPanel  
+ *
+ * @package    GameServerControlPanel
  * @subpackage System.Database
  * @author     Diogo Moura
  * @copyright  Copyright (c) 2012+, Diogo Moura
@@ -17,34 +18,37 @@ class Database
     {
         $this->_tbl_prefix = $tbl_prefix;
         $this->_pdo = new PDO("mysql:host=$hostname;dbname=$dbname", $username, $password);
-		$this->_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	}
-    public function Exec($query, $data= null)
+        $this->_pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+
+    public function Exec($query, $data = null)
     {
         $query = $this->_pdo->prepare($query);
         $query->execute($data);
 
         unset($query);
     }
+
     public function GetFirst($query, $data = null)
     {
         $query = $this->_pdo->prepare($query);
         $query->execute($data);
 
-		$query->setFetchMode(PDO::FETCH_ASSOC);
+        $query->setFetchMode(PDO::FETCH_ASSOC);
 
         return $query->fetch();
     }
 
-    public function Get($query, $data= null)
+    public function Get($query, $data = null)
     {
         $query = $this->_pdo->prepare($query);
         $query->execute($data);
 
-		$query->setFetchMode(PDO::FETCH_ASSOC);
+        $query->setFetchMode(PDO::FETCH_ASSOC);
 
         return $query;
     }
+
     public function PDO()
     {
         return $this->_pdo;

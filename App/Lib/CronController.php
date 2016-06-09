@@ -12,9 +12,9 @@ using('Controller', 'Core');
  **/
 class CronController extends Controller
 {
-	public function __construct()
-	{
-		if(!defined('STDIN'))
-			die();
-	}
+    public function __construct()
+    {
+        if (!defined('STDIN'))
+            die();
+    }
 }

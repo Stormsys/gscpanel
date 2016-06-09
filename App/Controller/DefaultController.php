@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Redirects requests to the dashboard controller.
  *

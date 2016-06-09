@@ -1,29 +1,31 @@
 <?php
-/** 
+
+/**
  * TODO: Update Description
- * 
- * @package    GameServerControlPanel  
+ *
+ * @package    GameServerControlPanel
  * @subpackage System.Core
  * @author     Diogo Moura
  * @copyright  Copyright (c) 2012+, Diogo Moura
  * @version    1.0
- **/  
- 
+ **/
 class Benchmark
 {
-    private static $_benchmarks = array();    
+    private static $_benchmarks = array();
+
     public static function Mark($name)
     {
-        self::$_benchmarks[$name] = microtime();        
+        self::$_benchmarks[$name] = microtime();
     }
+
     public static function Get($from, $to = null)
     {
         $first = self::$_benchmarks[$from];
-        if(!isset($to))           
+        if (!isset($to))
             $second = microtime();
-        else             
+        else
             $second = self::$_benchmarks[$to];
-            
-        return round($second - $first, 4) * 10000;        
+
+        return round($second - $first, 4) * 10000;
     }
 }   

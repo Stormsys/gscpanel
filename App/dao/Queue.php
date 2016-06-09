@@ -13,46 +13,49 @@ using('Query', 'Database');
  **/
 class Queue extends DAO
 {
-	public static function GetNextItem()
-	{
-		$query = new Query();
+    public static function GetNextItem()
+    {
+        $query = new Query();
 
-		$query->Select('*', 'Queue Q')
-			->Where('Q.in_progress', '1', '!=')
-			->OrderBy('Q.date_added', 'ASC');
+        $query->Select('*', 'Queue Q')
+            ->Where('Q.in_progress', '1', '!=')
+            ->OrderBy('Q.date_added', 'ASC');
 
-		return self::Database()->Get($query);
-	}
-	public static function DeleteAllInProgress()
-	{
-		$query = new Query();
+        return self::Database()->Get($query);
+    }
 
-		$query->Delete('Queue')
-			  ->Where('in_progress', '1');
+    public static function DeleteAllInProgress()
+    {
+        $query = new Query();
 
-		return self::Database()->Exec($query);
-	}
-	public static function AddAction($gs_id, $type, $data = null)
-	{
-		$query = new Query();
-		$query->Insert('Queue', array(
-			'action_id' => '',
-			'type' => $type,
-			'gs_id' => $gs_id,
-			'data' => empty($data) ? null : serialize($data),
-			'date_added' => 'NOW()'
-		));
+        $query->Delete('Queue')
+            ->Where('in_progress', '1');
 
-		self::Database()->Exec($query);
-	}
-	public static function InProgress($actid)
-	{
-		$query = new Query();
-		$query->Update('Queue Q', array(
-			'Q.in_progress' => '1'
-		))
-		->Where('Q.action_id', $actid);
+        return self::Database()->Exec($query);
+    }
 
-		self::Database()->Exec($query);
-	}
+    public static function AddAction($gs_id, $type, $data = null)
+    {
+        $query = new Query();
+        $query->Insert('Queue', array(
+            'action_id' => '',
+            'type' => $type,
+            'gs_id' => $gs_id,
+            'data' => empty($data) ? null : serialize($data),
+            'date_added' => 'NOW()'
+        ));
+
+        self::Database()->Exec($query);
+    }
+
+    public static function InProgress($actid)
+    {
+        $query = new Query();
+        $query->Update('Queue Q', array(
+            'Q.in_progress' => '1'
+        ))
+            ->Where('Q.action_id', $actid);
+
+        self::Database()->Exec($query);
+    }
 }

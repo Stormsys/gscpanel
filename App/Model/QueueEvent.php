@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Models a queue events.
  *
@@ -12,10 +13,10 @@ class QueueEvent
 {
     const STOP_SERVER = 0;
     const START_SERVER = 1;
-	const RESTART_SERVER = 2;
-	const REINSTALL_SERVER = 3;
-	const INSTALL_SERVER = 4;
-	const UPDATE_FTP_PASSWORD = 5;
-	const DELETE_SERVER = 6;
+    const RESTART_SERVER = 2;
+    const REINSTALL_SERVER = 3;
+    const INSTALL_SERVER = 4;
+    const UPDATE_FTP_PASSWORD = 5;
+    const DELETE_SERVER = 6;
 
 }
